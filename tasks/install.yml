@@ -1,0 +1,69 @@
+# This task will install apache http server
+
+- name: setup JRE environment
+  yum:
+    name: ['unzip','MySQL-python','java-1.8.0','java-1.8.0-devel']
+    state: present
+
+ #MySQL-python
+- name: RPM install  MySQL
+  yum:
+    name: https://github.com/github4vish/playbooks/blob/master/sonar/files/mysql-community-release-el7-5.noarch.rpm?raw=true
+    state: present
+
+- name:  Mysql server  install
+  yum:
+    name: mysql-server
+    state: present
+
+- name: start the  Mysql service
+  service:
+    name: mysqld
+    state: started
+
+    #- name: change mysql root password 
+    #  mysql_user:
+    #    name: root
+    #    password: Lync123* 
+    #    state: present
+
+- name: copy emp sql 
+  copy:
+    src: files/emp.sql
+    dest: /home/vish/emp.sql
+
+- name: create database  Mysql server
+  mysql_db:
+    login_user: root
+    login_password: Lync123*    
+    name: websystique
+    state: import
+    target: emp.sql
+
+
+- name: Download  Tomcat package , unzip 
+  become: no 
+  unarchive:
+    src: http://mirrors.estointernet.in/apache/tomcat/tomcat-7/v7.0.96/bin/apache-tomcat-7.0.96.zip
+    dest: /home/vish
+    remote_src: yes
+
+
+- name: Copy tomcat config with port 7777 defined and tomcat users
+  become: no
+  copy: src=files/{{ item }}   dest=apache-tomcat-7.0.96/conf/
+  with_items:
+    - server.xml
+    - tomcat-users.xml
+
+- name: start the tomcat service
+  become: no
+  command: '{{item}}' 
+  with_items:
+    - chmod +x -R apache-tomcat-7.0.96/bin
+    - apache-tomcat-7.0.96/bin/startup.sh
+      
+  #- name: Allow port 8080
+  #shell: iptables -I INPUT -p tcp --dport 8080 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+    

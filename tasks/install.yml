@@ -21,16 +21,17 @@
     name: mysqld
     state: started
 
-    #- name: change mysql root password 
-    #  mysql_user:
-    #    name: root
-    #    password: Lync123* 
-    #    state: present
+- name: change mysql root password 
+  mysql_user:
+    name: root
+    password: Lync123*
+    state: present
+  # comment this task after creating
 
 - name: copy emp sql 
   copy:
     src: files/emp.sql
-    dest: /home/vish/emp.sql
+    dest: emp.sql
 
 - name: create database  Mysql server
   mysql_db:
@@ -45,7 +46,7 @@
   become: no 
   unarchive:
     src: http://mirrors.estointernet.in/apache/tomcat/tomcat-7/v7.0.96/bin/apache-tomcat-7.0.96.zip
-    dest: /home/vish
+    dest: .
     remote_src: yes
 
 

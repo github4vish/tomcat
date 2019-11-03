@@ -1,7 +1,7 @@
 ---
 
 - name: run tomcat
-  hosts: deploy 
+  hosts: all 
   become: true
   roles:
     - ../tomcat
